@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Menu Numérique</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+        .container {
+            display: flex;
+            justify-content: space-between;
+        }
+        .left-panel, .right-panel, .summary-panel {
+            padding: 10px;
+        }
+        .right-panel button, .left-panel button, .summary-panel button {
+            display: block;
+            width: 100%;
+            margin: 5px 0;
+        }
+        .summary-panel {
+            border-top: 1px solid #000;
+            margin-top: 10px;
+        }
+        .copyright {
+            text-align: center;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Menu Numérique</h1>
+    <div class="container">
+        <div class="left-panel">
+            <h2>Catégories</h2>
+            <div id="categories"></div>
+        </div>
+        <div class="right-panel">
+            <h2>Plats</h2>
+            <div id="dishes"></div>
+        </div>
+    </div>
+    <div class="summary-panel">
+        <h2>Résumé de la commande</h2>
+        <ul id="orderSummary"></ul>
+        <p id="totalPrice">Total: 0.00€</p>
+        <button onclick="finishOrder()">Finir le menu</button>
+    </div>
+    <div class="copyright">
+        <p>Le logiciel Pochoco® est développé par VRFE® et le Restarant Ciao Bella à Bruxelles®<br>
+        est protégé par les lois sur les droits d'auteur et les traités internationaux.</p>
+    </div>
+
+    <script>
+        const menu = {
+            "Entrées": [
+                {"name": "Scampis Zucchini", "price": 23.50},
+                {"name": "Carpaccio de Capesante et Tartufo Nero", "price": 30.50},
+                {"name": "Carpaccio di manzo", "price": 19.50},
+                {"name": "Fonduta di Parmigiano", "price": 17.50},
+                {"name": "Capesante Fiorentina", "price": 25.50},
+                {"name": "Calamari alla romana", "price": 16.50}
+            ],
+            "Pâtes": [
+                {"name": "Penne ai Quattro Formaggi", "price": 18.50},
+                {"name": "Rigatoni All' Etrusca", "price": 23.50},
+                {"name": "Tagliatelle al Salmone", "price": 18.50},
+                {"name": "Spaghetti Aglio Olio e Peperoncino", "price": 17.50}
+            ],
+            "Escalope de Veau": [
+                {"name": "Paillard", "price": 20.50},
+                {"name": "Gorgonzola", "price": 21.50},
+                {"name": "Fiorentina", "price": 23.50},
+                {"name": "Lombarda", "price": 21.50},
+                {"name": "Parmigiana", "price": 23.50}
+            ],
+            "Boeuf": [
+                {"name": "Filetto Alla Gorgonzola", "price": 33.50},
+                {"name": "Filetto Al Pepe Nero", "price": 33.50},
+                {"name": "Filetto Alla Griglia", "price": 33.50}
+            ],
+            "Poisson": [
+                {"name": "Branzino Salsa Vergine", "price": 29.50},
+                {"name": "Salmone al Burro Bianco e Basilico", "price": 31.50},
+                {"name": "Orata con Zucchine e Curry", "price": 26.50}
+            ],
+            "Desserts": [
+                {"name": "Tiramisu della Casa", "price": 8.00},
+                {"name": "Panna Cotta al Mascarpone e Limone", "price": 8.00},
+                {"name": "Crostata alla mela", "price": 8.00},
+                {"name": "Gelato Mixto", "price": 8.00}
+            ],
+            "Softs": [
+                {"name": "Eau plate (Aqua Panna) 0.5L", "price": 3.5},
+                {"name": "Eau pétillante (San Pellegrino) 0.5L", "price": 3.5},
+                {"name": "Eau plate (Spa) 0.25L", "price": 2.5},
+                {"name": "Eau pétillante (Spa) 0.25L", "price": 2.5},
+                {"name": "Coca-cola 0.2L", "price": 3.5},
+                {"name": "Coca-cola zéro 0.2L", "price": 3.5},
+                {"name": "Fanta 0.2L", "price": 3.5},
+                {"name": "Sprite 0.2L", "price": 3.5},
+                {"name": "Ice Tea", "price": 3.5},
+                {"name": "Tonic water 0.2L", "price": 3.5},
+                {"name": "Jus de Pommes 0.33L", "price": 3.5},
+                {"name": "Jus d'Orange 0.33L", "price": 3.5}
+            ],
+            "Cocktails non alcoolisé": [
+                {"name": "Bellini", "price": 7.5},
+                {"name": "Mojito Mocktail", "price": 7.5},
+                {"name": "G&T Mocktail", "price": 7.5},
+                {"name": "Crodino", "price": 7.0}
+            ],
+            "Bières": [
+                {"name": "Leffe Brun", "price": 5.0},
+                {"name": "Leffe Blonde", "price": 5.0},
+                {"name": "Maes", "price": 3.5},
+                {"name": "Jupiler 0.0% Vol", "price": 3.5}
+            ],
+            "Apéritifs": [
+                {"name": "Prosecco", "price": 7.0},
+                {"name": "Kir Royal", "price": 7.0},
+                {"name": "Rosso Antico", "price": 7.0},
+                {"name": "Martini Rouge", "price": 7.0},
+                {"name": "Martini Blanc", "price": 7.0},
+                {"name": "Cynar", "price": 7.0},
+                {"name": "Porto Rouge", "price": 7.0},
+                {"name": "Gancia", "price": 7.0},
+                {"name": "Gin", "price": 7.0},
+                {"name": "Whyski", "price": 7.0}
+            ],
+            "Cocktails Alcoolisé": [
+                {"name": "Apérol Spritz", "price": 7.5},
+                {"name": "Americano", "price": 7.5},
+                {"name": "Negroni", "price": 7.5}
+            ]
+        };
+
+        let order = [];
+        let total_price = 0;
+
+        function createCategoryButtons() {
+            const categoriesDiv = document.getElementById('categories');
+            categoriesDiv.innerHTML = '';
+            const categories = Object.keys(menu);
+            categories.forEach(category => {
+                const button = document.createElement('button');
+                button.textContent = category;
+                button.onclick = () => showDishes(category);
+                categoriesDiv.appendChild(button);
+            });
+        }
+
+        function showDishes(category) {
+            const dishesDiv = document.getElementById('dishes');
+            dishesDiv.innerHTML = '';
+            const dishes = menu[category];
+            dishes.forEach(dish => {
+                const button = document.createElement('button');
+                button.textContent = `${dish.name} - ${dish.price}€`;
+                button.onclick = () => addToOrder(dish);
+                dishesDiv.appendChild(button);
+            });
+        }
+
+        function updateOrderSummary() {
+            const orderSummary = document.getElementById('orderSummary');
+            orderSummary.innerHTML = '';
+            order.forEach(dish => {
+                const li = document.createElement('li');
+                li.textContent = `${dish.name} - ${dish.price}€`;
+                orderSummary.appendChild(li);
+            });
+            document.getElementById('totalPrice').textContent = `Total: ${total_price.toFixed(2)}€`;
+        }
+
+        function addToOrder(dish) {
+            order.push(dish);
+            total_price += dish.price;
+            updateOrderSummary();
+        }
+
+        function finishOrder() {            const customer_name = prompt("Entrez votre nom:");
+            const num_people = parseInt(prompt("Combien de personnes?"), 10);
+            const date = prompt("Entrez la date (DD/MM/YYYY):");
+            const time = prompt("Entrez l'heure (HH:MM):");
+
+            if (!customer_name || !num_people || !date || !time) {
+                alert("Toutes les informations doivent être fournies!");
+                return;
+            }
+
+            const price_per_person = total_price / num_people;
+
+            let orderSummaryText = `Nom: ${customer_name}\nNombre de personnes: ${num_people}\nDate: ${date}\nHeure: ${time}\n\nCommande:\n`;
+            order.forEach(dish => {
+                orderSummaryText += `${dish.name} - ${dish.price}€\n`;
+            });
+            orderSummaryText += `\nTotal: ${total_price.toFixed(2)}€\n`;
+            orderSummaryText += `Total par personne: ${price_per_person.toFixed(2)}€`;
+
+            alert(orderSummaryText);
+
+            const exportButton = document.createElement('button');
+            exportButton.textContent = "Exporter";
+            exportButton.onclick = () => exportOrderSummary(orderSummaryText);
+            document.body.appendChild(exportButton);
+        }
+
+        function exportOrderSummary(orderSummary) {
+            const blob = new Blob([orderSummary], { type: 'text/plain' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'order_summary.txt';
+            document.body.appendChild(a);
+            a.click();
+            URL.revokeObjectURL(url);
+            a.remove();
+            alert("Résumé de la commande exporté avec succès sous le nom 'order_summary.txt'.");
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            createCategoryButtons();
+        });
+    </script>
+</body>
+</html>
+
+           
